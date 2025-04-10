@@ -5,26 +5,31 @@ let productSchema = mongoose.Schema({
         type:String,
         required:true,
         unique:true,
-    },quantity:{
+    },
+    quantity:{
         type:Number,
         min:0,
         required:true
-    },price:{
+    },
+    price:{
         type:Number,
         min:0,
         required:true
-    },description:{
+    },
+    description:{
         type:String,
         default:""
-    },imgURL:{
+    },
+    imageURL:{
         type:String,
         default:""
-    },category:{
+    },
+    category:{
         type:mongoose.Types.ObjectId,
         ref:'category',
         required:true
-    }
-    ,isDeleted:{
+    },
+    isDeleted:{
         type:Boolean,
         default:false
     },
@@ -33,4 +38,3 @@ let productSchema = mongoose.Schema({
     timestamps:true
 })
 module.exports = mongoose.model('product',productSchema)
-// Tao 1 schema cho obj category gồm name,description, timestamp

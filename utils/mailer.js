@@ -4,16 +4,16 @@ const transporter = nodemailer.createTransport({
     port: 25,
     secure: false, 
     auth: {
-      user: "",
-      pass: "",
+      user: "71f7843f493393",
+      pass: "ac85160f69438c",
     },
   });
 module.exports = {
     sendMailForgotPassword: async function(to,URL){
         return await transporter.sendMail({
             to:to,
-            subject:"THU MOI DU LICH VIEC NHE VOLT CAO",
-            html:`<a href=${URL}>CLICK VAO DAY DE DANG KI QUA CAM</a>`
+            subject:"DOI MAT KHAU",
+            html:`<a href=${URL}>CLICK VAO DAY DE DOI MAT KHAU MOI</a>`
         })
     }
 }

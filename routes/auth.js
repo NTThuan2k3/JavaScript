@@ -14,8 +14,6 @@ let FormData = require('form-data')
 let axios = require('axios')
 let fs = require('fs')
 
-
-
 router.post('/signup', SignUpValidator, validate, async function (req, res, next) {
     try {
         let newUser = await userController.CreateAnUser(
@@ -88,6 +86,7 @@ router.post('/resetpassword/:token', async function (req, res, next) {
         next(error)
     }
 })
+
 //storage
 let avatarDir = path.join(__dirname, "../avatars");
 let authURL = "http://localhost:3000/auth/avatars/";
@@ -102,7 +101,7 @@ let upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
         if (!file.mimetype.match('image')) {
-            cb(new Error("tao nhan anh? thoi"));
+            cb(new Error("only image"));
         } else {
             cb(null, true);
         }
