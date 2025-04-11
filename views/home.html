@@ -68,7 +68,7 @@
             ${user.role.name === 'admin' ? `
             <li class="nav-item">
                 <a class="btn btn-outline-warning me-2" href="/products">Quản lý sản phẩm</a>
-            </li>` : ''}
+            </li>` : '<li class="nav-item"><a class="nav-link" href="/cart">Giỏ hàng</a></li>'}
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="logout()">Đăng xuất</a>
             </li>
@@ -111,7 +111,6 @@
 
         const productList = document.getElementById('product-list');
         productList.innerHTML = '';
-
         currentProducts.forEach(product => {
             const productCard = `
                 <div class="col-md-4 mb-4">
@@ -120,7 +119,7 @@
                         <div class="card-body">
                             <h5 class="card-title">${product.name}</h5>
                             <p class="card-text">Giá: ${product.price} VNĐ</p>
-                            <p class="card-text">${product.description || ''}</p>
+                            <button class="btn btn-success" onclick="addToCart(${product.id})">Thêm vào giỏ hàng</button>
                         </div>
                     </div>
                 </div>
@@ -129,6 +128,31 @@
         });
     }
 
+    async function addToCart(productId) {
+        try {
+            const response = await fetch('http://localhost:3000/cartItems', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product: productId,
+                    quantity: 1
+                })
+            });
+
+            const result = await response.json();
+            console.log(result);
+            if (response.ok) {
+                alert('Thêm vào giỏ thành công!');
+            } else {
+                alert('Thất bại: ' + result.message);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Lỗi kết nối server!');
+        }
+    }
 
     function renderPagination() {
         const totalPages = Math.ceil(allProducts.length / productsPerPage);

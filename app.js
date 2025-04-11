@@ -77,8 +77,13 @@ app.get('/categories/add', (req, res) => {
 app.get('/categories/edit', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/admin/categories/editCategory.html'));
 });
+
 app.get('/users', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/admin/users/userManage.html'));
+});
+
+app.get('/cart', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', '/user/cart.html'));
 });
 
 app.use(logger('dev'));
@@ -97,7 +102,7 @@ app.use('/load/products', require('./routes/products'));
 app.use('/load/categories', require('./routes/categories'));
 
 app.use('/orders', require('./routes/orders'));
-app.use('/carts', require('./routes/carts'));
+app.use('/load/carts', require('./routes/carts'));
 app.use('/cartItems', require('./routes/cartItems'));
 app.use('/payments', require('./routes/payments'));
 
