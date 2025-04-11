@@ -62,7 +62,7 @@ async function loadCategories() {
         const data = await res.json();
 
         table.innerHTML = '';
-        data.forEach(category => {
+        data.data.forEach(category => {
             if (!category || category.isDeleted) return;
             table.innerHTML += `
                 <tr>

@@ -16,7 +16,7 @@ let upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
         if (!file.mimetype.match('image')) {
-            cb(new Error("tao nhan anh? thoi"));
+            cb(new Error("only image"));
         } else {
             cb(null, true);
         }

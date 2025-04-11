@@ -8,7 +8,7 @@ const constants = require('../utils/constants');
 
 /* GET users listing. */
 
-router.get('/', check_authentication,check_authorization(constants.ADMIN_PERMISSION), async function (req, res, next) {
+router.get('/',check_authentication,check_authorization(constants.MOD_PERMISSION), async function (req, res, next) {
   console.log(req.headers.authorization);
   let users = await userController.GetAllUser();
   CreateSuccessResponse(res, 200, users)

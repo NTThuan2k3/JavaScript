@@ -64,11 +64,7 @@
                 }
                 const data = await res.json();
     
-                if (!Array.isArray(data)) {
-                    throw new Error('Dữ liệu không hợp lệ');
-                }
-    
-                data.forEach(product => {
+                data.data.forEach(product => {
                     if (product.isDeleted) return;
                     table.innerHTML += `
                         <tr>
@@ -86,9 +82,7 @@
     
             } catch (error) {
                 console.error('Lỗi:', error.message);
-            } finally {
-                spinner.classList.add('d-none');
-            }
+            } 
         }
     
         async function deleteProduct(id) {

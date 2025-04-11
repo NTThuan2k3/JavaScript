@@ -12,6 +12,10 @@ let options = {
     },
     username: {
         minLength: 6
+    },
+    phoneNumber: {
+        minLength: 10,
+        maxLength: 15
     }
 }
 
@@ -37,6 +41,14 @@ module.exports = {
     LoginValidator: [
         body("username").isLength(options.username).withMessage("username hoac password sai"),
         body("password").isStrongPassword(options.password).withMessage("username hoac password sai")
+    ],
+    OrderValidator: [
+        body("phoneNumber")
+            .matches(/^0\d{9}$/)
+            .withMessage(constants.VALIDATOR_ERROR_PHONE),
+
+        body("shippingAddress")
+            .notEmpty()
+            .withMessage("Địa chỉ giao hàng không được để trống")
     ]
 }
-// multer

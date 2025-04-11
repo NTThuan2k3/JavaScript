@@ -19,6 +19,14 @@ let userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    phone: {
+        type: String,
+        default: ""
+    },
+    address: {
+        type: String,
+        default: ""
+    },
     avatarUrl: {
         type: String,
         default: ""
@@ -26,20 +34,27 @@ let userSchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: false
-    }, loginCount: {
+    }, 
+    loginCount: {
         type: Number,
         default: 0,
         min: 0
-    }, role: {
+    },
+    role: {
         type: mongoose.Types.ObjectId,
         ref: 'role',
         required: true
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
     },
     resetPasswordToken: String,
     resetPasswordTokenExp: Date
 }, {
     timestamps: true
 })
+
 userSchema.pre('save', function (next) {
     if (this.isModified('password')) {
         let salt = bcrypt.genSaltSync(10);
@@ -50,14 +65,3 @@ userSchema.pre('save', function (next) {
 })
 
 module.exports = mongoose.model('user', userSchema)
-/*
-username: string, unique, required
-password: string,required
-email: string, required, unique
-fullName:string, default: ""
-avatarUrl:string, default: ""
-status: boolean, default: false
-role: Role,
-loginCount: int, default:0, min=0
-timestamp
-*/

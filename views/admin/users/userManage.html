@@ -37,8 +37,9 @@
                         <tr>
                             <th>Tên người dùng</th>
                             <th>Email</th>
+                            <th>Họ tên</th>
+                            <th>Số điện thoại</th>
                             <th>Vai trò</th>
-                            <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
@@ -54,25 +55,22 @@
             const table = document.getElementById('userTable');
     
             try {
-                const res = await fetch('http://localhost:3000/users');
+                const res = await fetch('http://localhost:3000/load/users');
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
                 const data = await res.json();
     
-                if (!Array.isArray(data)) {
-                    throw new Error('Dữ liệu không hợp lệ');
-                }
-    
                 table.innerHTML = '';
-                data.forEach(user => {
+                data.data.forEach(user => {
                     if (user.isDeleted) return;
                     table.innerHTML += `
                         <tr>
                             <td>${user.username || 'N/A'}</td>
                             <td>${user.email || 'N/A'}</td>
-                            <td>${user.role || 'User'}</td>
-                            <td>${user.isActive ? 'Hoạt động' : 'Đã khóa'}</td>
+                            <td>${user.fullname || 'N/a'}</td>
+                            <td>${user.phone || 'N/a'}</td>
+                            <td>${user.role.name || 'User'}</td>
                             <td>
                                 <button class="btn btn-sm btn-danger" onclick="deleteUser('${user._id}')">Xóa</button>
                             </td>

@@ -28,7 +28,7 @@
                 <label class="form-label">Số lượng</label>
                 <input type="number" class="form-control" id="quantity">
             </div>
-
+            
             <div class="mb-3">
                 <label class="form-label">Mô tả</label>
                 <input type="text" class="form-control" id="description">
@@ -66,7 +66,7 @@
             document.getElementById('name').value = product.name;
             document.getElementById('price').value = product.price;
             document.getElementById('quantity').value = product.quantity;
-            document.getElementById('category').value = product.category?.name || '';
+            // document.getElementById('category').value = product.category?.name || '';
             document.getElementById('description').value = product.description || '';
             document.getElementById('imgURL').value = product.imgURL || '';
         }else{
@@ -86,7 +86,7 @@
             body: JSON.stringify({
                 name: document.getElementById('name').value,
                 price: document.getElementById('price').value,
-                category: document.getElementById('category').value,
+                // category: document.getElementById('category').value,
                 description: document.getElementById('description').value,
                 imgURL: document.getElementById('imgURL').value
             })

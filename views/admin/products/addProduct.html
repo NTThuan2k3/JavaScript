@@ -48,7 +48,7 @@ async function loadCategories(){
     const data = await res.json();
     const categorySelect = document.getElementById('category');
 
-    data.forEach(item => {
+    data.data.forEach(item => {
         categorySelect.innerHTML += `<option value="${item.name}">${item.name}</option>`;
     });
 }

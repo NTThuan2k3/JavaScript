@@ -17,7 +17,7 @@ app.use(cors({
   origin:'*'
 }))
 
-mongoose.connect("mongodb://0.0.0.0:27017/S6");
+mongoose.connect("mongodb://0.0.0.0:27017/DoAn");
 mongoose.connection.on('connected',()=>{
   console.log("connected");
 })
@@ -77,6 +77,9 @@ app.get('/categories/add', (req, res) => {
 app.get('/categories/edit', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/admin/categories/editCategory.html'));
 });
+app.get('/users', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', '/admin/users/userManage.html'));
+});
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -86,13 +89,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/load/users', usersRouter);
 app.use('/auth', require('./routes/auth'));
 app.use('/menus', require('./routes/menus'));
 app.use('/roles', require('./routes/roles'));
 app.use('/load/products', require('./routes/products'));
 app.use('/load/categories', require('./routes/categories'));
 
+app.use('/orders', require('./routes/orders'));
+app.use('/carts', require('./routes/carts'));
+app.use('/cartItems', require('./routes/cartItems'));
+app.use('/payments', require('./routes/payments'));
 
 
 // catch 404 and forward to error handler
