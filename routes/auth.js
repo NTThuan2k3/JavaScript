@@ -87,6 +87,9 @@ router.post('/resetpassword/:token', async function (req, res, next) {
     }
 })
 
+module.exports = router;
+
+
 //storage
 let avatarDir = path.join(__dirname, "../avatars");
 let authURL = "http://localhost:3000/auth/avatars/";
@@ -111,7 +114,7 @@ let upload = multer({
     }
 })
 
-//upload
+//upload avatar 2 server
 router.post("/change_avatar", check_authentication, upload.single('avatar'), async function (req, res, next) {
     let imgPath = path.join(avatarDir, req.file.filename);
     let newform = new FormData();
@@ -133,4 +136,15 @@ router.get("/avatars/:filename", function (req, res, next) {
     res.sendFile(pathAvatar)
 })
 
-module.exports = router;
+// //upload avatar 1 server
+// router.post("/change_avatar", check_authentication, upload.single('avatar'), async function (req, res, next) {
+//     try {
+//         let avatarURL = authURL + req.file.filename;
+//         req.user.avatarUrl = avatarURL;
+//         await req.user.save();
+//         CreateSuccessResponse(res, 200, req.user);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
+
