@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Chủ | My Application</title>
+    <title>Trang Chủ | WebBanHang</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">MyApp</a>
+            <a class="navbar-brand" href="#">WebBanHang</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -23,29 +23,20 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-4">
-        <header class="text-center mb-4">
-            <h1 class="display-4">Welcome to My Application</h1>
-            <p class="lead">This is your awesome homepage!</p>
-        </header>
 
-        <main>
-            <div class="row">
-                <div class="col-md-8">
-                    <h2>Main Content</h2>
-                    <p>This is the main content area of your website.</p>
-                </div>
+     <div class="container my-4">
+        <div class="p-5 bg-primary text-white text-center rounded">
+            <h1>Chào mừng đến với Website bán hàng của chúng tôi</h1>
+            <p>Chuyên bán các sản phẩm chất lượng với giá siêu tốt!</p>
+        </div>
+    </div>
 
-                <div class="col-md-4">
-                    <h3>Sidebar</h3>
-                    <ul class="list-group">
-                        <li class="list-group-item">Feature 1</li>
-                        <li class="list-group-item">Feature 2</li>
-                        <li class="list-group-item">Feature 3</li>
-                    </ul>
-                </div>
-            </div>
-        </main>
+    <div class="container mt-5">
+        <h2 class="mb-4">Các sản phẩm hiện có</h2>
+        <div class="row" id="product-list">
+
+        </div>
+        <div class="text-center mt-4" id="pagination"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -66,7 +57,6 @@
             }
         } catch (err) {
             console.log('Data fetched failed:');
-            renderGuestNav();
         }
     }
 
@@ -85,7 +75,6 @@
         `;
     }
 
-
     function renderGuestNav() {
         document.getElementById('nav-links').innerHTML = `
             <li class="nav-item">
@@ -97,6 +86,65 @@
         `;
     }
 
+    let allProducts = [];
+    const productsPerPage = 6;
+
+    async function loadProducts() {
+        try {
+            const res = await fetch('http://localhost:3000/load/products');
+            const result = await res.json();
+
+            allProducts = result.data; 
+
+            renderProducts(1); // Load trang đầu tiên
+            renderPagination(); // Tạo nút phân trang
+
+        } catch (error) {
+            console.error('Error loading products', error);
+        }
+    }
+
+    function renderProducts(page) {
+        const start = (page - 1) * productsPerPage;
+        const end = start + productsPerPage;
+        const currentProducts = allProducts.slice(start, end);
+
+        const productList = document.getElementById('product-list');
+        productList.innerHTML = '';
+
+        currentProducts.forEach(product => {
+            const productCard = `
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="${product.imageURL || 'https://via.placeholder.com/150'}" class="card-img-top" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">Giá: ${product.price} VNĐ</p>
+                            <p class="card-text">${product.description || ''}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            productList.innerHTML += productCard;
+        });
+    }
+
+
+    function renderPagination() {
+        const totalPages = Math.ceil(allProducts.length / productsPerPage);
+        const pagination = document.getElementById('pagination');
+
+        pagination.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            pagination.innerHTML += `
+                <button class="btn btn-outline-primary mx-1" onclick="renderProducts(${i})">${i}</button>
+            `;
+        }
+    }
+        
+    loadProducts();
+    
     function logout() {
         fetch('http://localhost:3000/auth/logout', { credentials: 'include' })
             .then(() => {

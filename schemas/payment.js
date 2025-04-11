@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 
-let paymentSchema = mongoose.Schema({
+let paymentSchema = new mongoose.Schema({
     order:{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'order' 

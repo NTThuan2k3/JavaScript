@@ -1,27 +1,31 @@
-let cartSchema = require('../schemas/cart');
+const cartSchema = require('../schemas/cart');
+const cartItemSchema = require('../schemas/cartItem');
 
 module.exports = {
-  AddItemToCart: async function (userID, productID, quantity) {
-    let cart = await cartSchema.findOne({ user: userID });
-    if (!cart) {
-      cart = new cartSchema({ user: userID, items: [] });
-    }
-
-    let existingItem = cart.items.find(item => item.product.toString() === productID);
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.items.push({ product: productID, quantity });
-    }
-
-    return await cart.save();
+  GetCartItems: async function (userID) {
+    const cart = await cartSchema.findOne({ user: userID });
+    if (!cart) throw new Error('Cart not found');
+    return await cartItemSchema.find({ cart: cart._id }).populate('product');
   },
-  RemoveItemFromCart: async function (userID, productID) {
-    let cart = await cartSchema.findOne({ user: userID });
-    if (cart) {
-      cart.items = cart.items.filter(item => item.product.toString() !== productID);
-      return await cart.save();
+
+  AddCartItem: async function (userID, productID, quantity = 1) {
+    const cart = await cartSchema.findOne({ user: userID });
+    if (!cart) throw new Error('Cart not found');
+
+    let item = await cartItemSchema.findOne({ cart: cart._id, product: productID });
+    if (item) {
+      item.quantity += quantity;
+      return await item.save();
+    } else {
+      return await cartItemSchema.create({ cart: cart._id, product: productID, quantity });
     }
-    return null;
+  },
+
+  UpdateCartItem: async function (itemId, quantity) {
+    return await cartItemSchema.findByIdAndUpdate(itemId, { quantity }, { new: true });
+  },
+
+  DeleteCartItem: async function (itemId) {
+    return await cartItemSchema.findByIdAndDelete(itemId);
   }
 };

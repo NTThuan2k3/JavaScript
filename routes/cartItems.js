@@ -1,37 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const cartItemController = require('../controllers/cartItems');
-const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
 const { check_authentication } = require('../utils/check_auth');
+const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
 
-// Thêm sản phẩm vào giỏ hàng
+router.get('/', check_authentication, async (req, res) => {
+  try {
+    const items = await cartItemController.GetCartItems(req.user._id);
+    CreateSuccessResponse(res, 200, items);
+  } catch (error) {
+    CreateErrorResponse(res, 500, error.message);
+  }
+});
+
 router.post('/', check_authentication, async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
-    const result = await cartItemController.AddItemToCart(req.user._id, productId, quantity);
-    CreateSuccessResponse(res, 200, result);
+    const item = await cartItemController.AddCartItem(req.user._id, req.body.product, req.body.quantity);
+    CreateSuccessResponse(res, 200, item);
   } catch (error) {
-    CreateErrorResponse(res, 400, error.message);
+    CreateErrorResponse(res, 500, error.message);
   }
 });
 
-// Cập nhật số lượng sản phẩm trong giỏ
-router.put('/:itemId', check_authentication, async (req, res) => {
+router.put('/:id', check_authentication, async (req, res) => {
   try {
-    const result = await cartItemController.UpdateItemQuantity(req.user._id, req.params.itemId, req.body.quantity);
-    CreateSuccessResponse(res, 200, result);
+    const updated = await cartItemController.UpdateCartItem(req.params.id, req.body.quantity);
+    CreateSuccessResponse(res, 200, updated);
   } catch (error) {
-    CreateErrorResponse(res, 400, error.message);
+    CreateErrorResponse(res, 500, error.message);
   }
 });
 
-// Xóa sản phẩm khỏi giỏ
-router.delete('/:itemId', check_authentication, async (req, res) => {
+router.delete('/:id', check_authentication, async (req, res) => {
   try {
-    const result = await cartItemController.RemoveItemFromCart(req.user._id, req.params.itemId);
-    CreateSuccessResponse(res, 200, result);
+    const deleted = await cartItemController.DeleteCartItem(req.params.id);
+    CreateSuccessResponse(res, 200, deleted);
   } catch (error) {
-    CreateErrorResponse(res, 400, error.message);
+    CreateErrorResponse(res, 500, error.message);
   }
 });
 

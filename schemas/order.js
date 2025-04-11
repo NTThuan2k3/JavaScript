@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 
-let orderSchema = mongoose.Schema({
+let orderSchema = new mongoose.Schema({
     user:{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'user' 

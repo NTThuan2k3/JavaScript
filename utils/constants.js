@@ -1,6 +1,6 @@
 module.exports = {
-    SECRET_KEY: "NNPTUDS6",
-    SECRET_KEY_COOKIE: "NNPTUDS6",
+    SECRET_KEY: "JavaScript",
+    SECRET_KEY_COOKIE: "JavaScript",
     USER_PERMISSION:["user","mod","admin"],
     MOD_PERMISSION:["mod","admin"],
     ADMIN_PERMISSION:["admin"],
