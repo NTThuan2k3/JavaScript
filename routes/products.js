@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
         $lte: price?.$lte ? Number(price.$lte) : 10000
       }
     };
-    let products = await productController.GetAllProduct(query);
+    let products = await productController.GetAllProducts(query);
     CreateSuccessResponse(res, 200, products);
   } catch (error) {
     CreateErrorResponse(res, 500, error.message);
@@ -36,9 +36,9 @@ router.get('/:id', async (req, res) => {
 // POST create new product
 router.post('/', async (req, res) => {
   try {
-    let { name, price = 1000, quantity = 10, category } = req.body;
+    let { name, quantity = 10, price = 1000, category } = req.body;
     let slug = slugify(name, { lower: true });
-    let newProduct = await productController.CreateAProduct(name, price, quantity, category, slug);
+    let newProduct = await productController.CreateAProduct(name, quantity, price, category, slug);
     CreateSuccessResponse(res, 200, newProduct);
   } catch (error) {
     CreateErrorResponse(res, 500, error.message);

@@ -40,7 +40,10 @@ app.use('/menus', require('./routes/menus'));
 app.use('/roles', require('./routes/roles'));
 app.use('/products', require('./routes/products'));
 app.use('/categories', require('./routes/categories'));
-
+app.use('/orders', require('./routes/orders'));
+app.use('/carts', require('./routes/carts'));
+app.use('/cartItems', require('./routes/cartItems'));
+app.use('/payments', require('./routes/payments'));
 
 
 // catch 404 and forward to error handler

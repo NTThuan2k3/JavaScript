@@ -1,5 +1,6 @@
 let productSchema = require('../schemas/product');
 let categorySchema = require('../schemas/category');
+let mongoose = require('mongoose');
 
 module.exports = {
   GetAllProducts: async function () {
@@ -8,15 +9,19 @@ module.exports = {
   GetProductByID: async function (id) {
     return await productSchema.findById(id).populate('category');
   },
-  CreateAProduct: async function (name, price, categoryId, description, slug) {
-    let category = await categorySchema.findById(categoryId);
+  CreateAProduct: async function (name, quantity, price, categoryInput, slug) {
+    // Tìm theo tên hoặc ID
+    let category = mongoose.isValidObjectId(categoryInput)
+        ? await categorySchema.findById(categoryInput)
+        : await categorySchema.findOne({ name: categoryInput });
+
     if (!category) throw new Error("category không tồn tại");
 
     let newProduct = new productSchema({
       name,
+      quantity,
       price,
       category: category._id,
-      description,
       slug
     });
     return await newProduct.save();
