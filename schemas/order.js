@@ -28,6 +28,10 @@ let orderSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    method:{ 
+        type: String, 
+        default: 'cash' 
+    },
     isDeleted:{
         type:Boolean,
         default:false
