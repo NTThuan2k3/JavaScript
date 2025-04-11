@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 
-let categorySchema = mongoose.Schema({
+let categorySchema = new mongoose.Schema({
     name:{
         type:String,
         required:true,

@@ -1,22 +1,20 @@
-let cartSchema = require('../schemas/cart');
+const cartSchema = require('../schemas/cart');
+const cartItemSchema = require('../schemas/cartItem');
 
 module.exports = {
-  GetAllCarts: async function () {
-    return await cartSchema.find({ isDeleted: false }).populate('user items.product');
-  },
-  GetCartByUserID: async function (userID) {
-    return await cartSchema.findOne({ user: userID, isDeleted: false }).populate('items.product');
-  },
-  AddOrUpdateCart: async function (userID, items) {
+  GetCart: async function (userID) {
     let cart = await cartSchema.findOne({ user: userID });
+
     if (!cart) {
-      cart = new cartSchema({ user: userID, items });
-    } else {
-      cart.items = items; // override, or implement merge logic
+      cart = await cartSchema.create({ user: userID });
     }
-    return await cart.save();
-  },
-  DeleteCart: async function (id) {
-    return await cartSchema.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+
+    // Lấy danh sách sản phẩm trong giỏ
+    let items = await cartItemSchema.find({ cart: cart._id }).populate('product');
+
+    return {
+      ...cart.toObject(),  // convert cart to plain object
+      items                // thêm danh sách sản phẩm
+    };
   }
 };

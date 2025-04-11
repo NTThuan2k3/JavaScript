@@ -26,5 +26,37 @@ router.post('/',check_authentication,check_authorization(constants.ADMIN_PERMISS
   }
 });
 
-
 module.exports = router;
+
+// const seedRoles = async () => {
+//   try {
+//     const defaultRoles = [
+//       { name: 'admin', description: 'Quản trị viên toàn hệ thống' },
+//       { name: 'mod', description: 'Quản lý nội dung và người dùng' },
+//       { name: 'user', description: 'Người dùng thông thường' }
+//     ];
+
+//     for (let role of defaultRoles) {
+//       let existed = await roleSchema.findOne({ name: role.name });
+//       if (!existed) {
+//         await roleSchema.create(role);
+//         console.log(`Đã thêm quyền: ${role.name}`);
+//       } else {
+//         console.log(`Quyền ${role.name} đã tồn tại`);
+//       }
+//     }
+
+//     console.log('Seed role hoàn tất.');
+//   } catch (error) {
+//     console.error('Lỗi khi seed roles:', error.message);
+//   }
+// };
+
+// router.post('/seed', async function (req, res, next) {
+//   try {
+//     await seedRoles();
+//     CreateSuccessResponse(res, 200, "Đã seed roles mặc định");
+//   } catch (error) {
+//     CreateErrorResponse(res, 404, error.message)
+//   }
+// });
