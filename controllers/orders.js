@@ -79,10 +79,25 @@ module.exports = {
     order.isDeleted = true;
     return await order.save();
   },
-  GetAllOrders: async function () {
+  GetAllOrders: async function (userId) {
     return await orderSchema
-      .find({ isDeleted: false })
+      .find({user: userId, isDeleted: false })
       .populate('items.product');         // lấy thông tin sản phẩm
+  },
+  GetOrderById: async function (id) {
+    return await orderModel.findById({ _id: id, isDeleted: false });
+  },
+  GetOrdersByUserId: async function (userId) {
+    try {
+       let User = await userModel.findById(userId);
+       if (User) {
+          return await orderModel.find({ user: User, isDeleted: false });
+       } else {
+          throw new Error("Khong tim thay user");
+       }
+    } catch (error) {
+       throw new Error(error.message); 
+    }
   },
   GetOrderById: async function (orderId) {
     let order = await orderSchema

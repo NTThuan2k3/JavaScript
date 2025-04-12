@@ -47,7 +47,8 @@ router.delete('/:id', check_authentication, check_authorization(constants.USER_P
 // Lấy tất cả đơn hàng của user
 router.get('/', check_authentication, check_authorization(constants.USER_PERMISSION), async (req, res) => {
   try {
-    let orders = await orderController.GetAllOrders();
+    let userId = req.user._id;
+    let orders = await orderController.GetOrdersByUserId(userId);
     CreateSuccessResponse(res, 200, orders);
   } catch (error) {
     CreateErrorResponse(res, 400, error.message);
