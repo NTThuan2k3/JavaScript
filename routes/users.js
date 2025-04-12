@@ -22,7 +22,7 @@ router.post('/', check_authentication,check_authorization(constants.ADMIN_PERMIS
     CreateErrorResponse(res, 404, error.message)
   }
 });
-router.put('/:id', check_authentication,check_authorization(constants.ADMIN_PERMISSION), async function (req, res, next) {
+router.put('/:id',check_authentication, async function (req, res, next) {
   try {
     let body = req.body;
     let updatedResult = await userController.UpdateAnUser(req.params.id, body);
@@ -31,6 +31,5 @@ router.put('/:id', check_authentication,check_authorization(constants.ADMIN_PERM
     next(error)
   }
 });
-
 
 module.exports = router;

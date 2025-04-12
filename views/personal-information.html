@@ -13,10 +13,14 @@
         <div class="card shadow p-4 text-center" style="width: 100%; max-width: 400px;">
             <h3 class="mb-4">Thông tin cá nhân</h3>
 
-            <img id="avatar" src="" class="rounded-circle mb-3" width="150" height="150" alt="Avatar">
+            <img id="avatar" src="" class="rounded-circle mb-3 mx-auto d-block" width="150" height="150" alt="Avatar">
 
             <h5 id="username"></h5>
             <p id="fullname" class="text-muted"></p>
+
+            <!-- Thêm nút cập nhật ảnh đại diện -->
+            <input type="file" id="avatarInput" class="form-control mb-3" accept="image/*">
+            <button id="uploadAvatarBtn" class="btn btn-primary w-100">Cập nhật ảnh đại diện</button>
 
             <a href="/changepassword" class="btn btn-warning w-100 mt-2">Đổi mật khẩu</a>
 
@@ -46,6 +50,29 @@
                 window.location.href = '/login';
             }
         }
+
+        async function updateAvatar(event) {
+            const fileInput = document.getElementById('avatarInput');
+            const formData = new FormData();
+            formData.append('avatar', fileInput.files[0]);
+            const res = await fetch('http://localhost:3000/auth/change_avatar', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('avatar').src = data.user.avatarUrl;
+                    alert('Cập nhật ảnh đại diện thành công!');
+                } else {
+                    console.log(data.message);
+                    alert('Lỗi cập nhật ảnh đại diện!');
+                }
+        }
+
+        document.getElementById('uploadAvatarBtn').addEventListener('click', updateAvatar);
 
         loadUserInfo();
     </script>

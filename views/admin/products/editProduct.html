@@ -35,8 +35,8 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Link ảnh</label>
-                <input type="text" class="form-control" id="imgURL">
+                <label class="form-label">Chọn ảnh</label>
+                <input type="file" class="form-control" id="image" accept="image/*">
             </div>
 
             <button class="btn btn-warning w-100">Cập nhật</button>
@@ -68,7 +68,7 @@
             document.getElementById('quantity').value = product.quantity;
             // document.getElementById('category').value = product.category?.name || '';
             document.getElementById('description').value = product.description || '';
-            document.getElementById('imgURL').value = product.imgURL || '';
+            document.getElementById('image').value = product.image || '';
         }else{
             alert('Không tìm thấy sản phẩm!');
             window.location.href = '/products';
@@ -80,17 +80,16 @@
     document.getElementById('editProductForm').addEventListener('submit', async function(e){
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append('name', document.getElementById('name').value);
+        formData.append('price', document.getElementById('price').value);
+        formData.append('quantity', document.getElementById('quantity').value);
+        formData.append('description', document.getElementById('description').value);
+        formData.append('image', document.getElementById('image').files[0]); // ảnh
+
         const res = await fetch(`http://localhost:3000/load/products/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: document.getElementById('name').value,
-                price: document.getElementById('price').value,
-                // category: document.getElementById('category').value,
-                quantity: document.getElementById('quantity').value,
-                description: document.getElementById('description').value,
-                imgURL: document.getElementById('imgURL').value
-            })
+            body: formData
         });
 
         const data = await res.json();

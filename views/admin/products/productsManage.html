@@ -41,11 +41,12 @@
                             <th>Số lượng</th>
                             <th>Giá</th>
                             <th>Danh mục</th>
+                            <th>Ảnh</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="productTable">
-
+                        
                     </tbody>
                 </table>
             </div>
@@ -72,6 +73,7 @@
                             <td>${product.quantity || 0}</td>
                             <td>${product.price}</td>
                             <td>${product.category?.name || 'N/A'}</td>
+                            <td><img src="${product.imgURL}" alt="${product.name}" style="width: 100px; height: auto;"></td>
                             <td>
                                 <a href="/products/edit?id=${product._id}" class="btn btn-sm btn-info me-1">Xem chi tiết</a>
                                 <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product._id}')">Xóa</button>
