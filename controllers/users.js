@@ -49,10 +49,7 @@ module.exports = {
     return await getUser.save();
   },
   DeleteAnUser: async function (id) {
-    return await userSchema.findByIdAndUpdate(id, { status: false }
-      , {
-        new: true
-      });
+    return await userSchema.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
   },
   CheckLogin: async function (username, password) {
     let user = await userSchema.findOne({

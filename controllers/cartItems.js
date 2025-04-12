@@ -1,16 +1,16 @@
-const cartSchema = require('../schemas/cart');
-const cartItemSchema = require('../schemas/cartItem');
+let cartSchema = require('../schemas/cart');
+let cartItemSchema = require('../schemas/cartItem');
 
 module.exports = {
   GetCartItems: async function (userID) {
-    const cart = await cartSchema.findOne({ user: userID });
+    let cart = await cartSchema.findOne({ user: userID });
     if (!cart) throw new Error('Cart not found');
     return await cartItemSchema.find({ cart: cart._id }).populate('product');
   },
 
   AddCartItem: async function (userID, productID, quantity = 1) {
-    const cart = await cartSchema.findOne({ user: userID });
-    
+    let cart = await cartSchema.findOne({ user: userID });
+
     //Tự động tạo giỏ hàng nếu chưa có
     if (!cart) {
       cart = await cartSchema.create({ user: userID });

@@ -1,14 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const path = require('path');
-const fs = require('fs');
-const FormData = require('form-data');
-const axios = require('axios');
-const multer = require('multer');
-const slugify = require('slugify');
-
-const productController = require('../controllers/products');
-const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
+var express = require('express');
+var router = express.Router();
+let path = require('path');
+let fs = require('fs');
+let FormData = require('form-data');
+let axios = require('axios');
+let multer = require('multer');
+let slugify = require('slugify');
+let {check_authentication,check_authorization} = require('../utils/check_auth');
+let constants = require('../utils/constants');
+var productController = require('../controllers/products');
+let { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
 
 // Cấu hình upload ảnh (sẽ upload lên thư mục tạm trước khi gửi đến server CDN)
 let imageDir = path.join(__dirname, "../images");
@@ -88,8 +89,7 @@ router.get('/:id', async (req, res) => {
 // });
 
 // POST create new product with image 1 server
-// POST create new product (ảnh lưu trên cùng server)
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', upload.single('image'), check_authentication, check_authorization(constants.MOD_PERMISSION), async (req, res) => {
   try {
     let { name, quantity = 10, price = 1000, category } = req.body;
     let slug = slugify(name, { lower: true });
@@ -110,23 +110,20 @@ router.post('/', upload.single('image'), async (req, res) => {
   }
 });
 
-// PUT update product (có thể cập nhật ảnh mới)
-router.put('/:id', upload.single('image'), async (req, res) => {
+// PUT update product (có thể cập nhật ảnh mới tại server hiện tại)
+router.put('/:id', upload.single('image'), check_authentication, check_authorization(constants.MOD_PERMISSION), async (req, res) => {
   try {
+    // Tạo slug nếu có thay đổi tên
     if (req.body.name) {
       req.body.slug = slugify(req.body.name, { lower: true });
     }
 
-    // Nếu có file ảnh → upload lên server CDN
+    // Nếu có file ảnh → tạo đường dẫn ảnh nội bộ
     if (req.file) {
-      let imgPath = path.join(imageDir, req.file.filename);
-      let form = new FormData();
-      form.append('image', fs.createReadStream(imgPath));
-      let result = await axios.post(serverCDN, form, { headers: {'Content-Type': 'multipart/form-data'}});
-      fs.unlinkSync(imgPath);
-      req.body.imgURL = result.data?.data || "";
+      req.body.imageURL = `http://localhost:3000/load/products/images/${req.file.filename}`;
     }
 
+    // Cập nhật sản phẩm
     let updatedProduct = await productController.UpdateAProduct(req.params.id, req.body);
     CreateSuccessResponse(res, 200, updatedProduct);
   } catch (error) {
@@ -134,8 +131,33 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   }
 });
 
+
+// // PUT update product (có thể cập nhật ảnh mới)
+// router.put('/:id', upload.single('image'), async (req, res) => {
+//   try {
+//     if (req.body.name) {
+//       req.body.slug = slugify(req.body.name, { lower: true });
+//     }
+
+//     // Nếu có file ảnh → upload lên server CDN
+//     if (req.file) {
+//       let imgPath = path.join(imageDir, req.file.filename);
+//       let form = new FormData();
+//       form.append('image', fs.createReadStream(imgPath));
+//       let result = await axios.post(serverCDN, form, { headers: {'Content-Type': 'multipart/form-data'}});
+//       fs.unlinkSync(imgPath);
+//       req.body.imgURL = result.data?.data || "";
+//     }
+
+//     let updatedProduct = await productController.UpdateAProduct(req.params.id, req.body);
+//     CreateSuccessResponse(res, 200, updatedProduct);
+//   } catch (error) {
+//     CreateErrorResponse(res, 500, error.message);
+//   }
+// });
+
 // DELETE (soft delete) a product
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', check_authentication, check_authorization(constants.MOD_PERMISSION), async (req, res) => {
   try {
     let deletedProduct = await productController.DeleteAProduct(req.params.id);
     CreateSuccessResponse(res, 200, deletedProduct);

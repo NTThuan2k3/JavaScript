@@ -1,5 +1,5 @@
-const cartSchema = require('../schemas/cart');
-const cartItemSchema = require('../schemas/cartItem');
+let cartSchema = require('../schemas/cart');
+let cartItemSchema = require('../schemas/cartItem');
 
 module.exports = {
   GetCart: async function (userID) {
