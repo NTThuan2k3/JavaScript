@@ -11,19 +11,19 @@ const productController = require('../controllers/products');
 const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
 
 // Cấu hình upload ảnh (sẽ upload lên thư mục tạm trước khi gửi đến server CDN)
-let imageDir = path.join(__dirname, "../temp_images");
-let serverCDN = 'http://localhost:4000/upload/image';
-let productImgURL = "http://localhost:4000/images/";
+let imageDir = path.join(__dirname, "../images");
+let serverCDN = 'http://localhost:4000/images';
+let productImgURL = "http://localhost:3000/products/images/";
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, imageDir),
-  filename: (req, file, cb) => cb(null, Date.now() + '_' + file.originalname)
+  filename: (req, file, cb) => cb(null, file.originalname)
 });
 let upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith('image')) {
-      cb(new Error("Chỉ cho phép ảnh"));
+      cb(new Error("only image"));
     } else {
       cb(null, true);
     }
@@ -60,23 +60,50 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST create new product with image
+// // POST create new product with image 2 server
+// router.post('/', upload.single('image'), async (req, res) => {
+//   try {
+//     let { name, quantity = 10, price = 1000, category } = req.body;
+//     let slug = slugify(name, { lower: true });
+
+//     // Gửi ảnh lên server CDN
+//     let imgPath = path.join(imageDir, req.file.filename);
+//     let form = new FormData();
+//     form.append('image', fs.createReadStream(imgPath));
+//     let result = await axios.post(serverCDN, form, {
+//             headers: {
+//                 'Content-Type': 'multipart/form-data'
+//             }
+//         })
+//     fs.unlinkSync(imgPath) // Xoá ảnh tạm sau khi gửi
+
+//     // URL ảnh trên CDN
+//     let imgURL = result.data?.data || "";
+
+//     let newProduct = await productController.CreateAProduct(name, quantity, price, category, slug, imgURL);
+//     CreateSuccessResponse(res, 200, newProduct);
+//   } catch (error) {
+//     CreateErrorResponse(res, 500, error.message);
+//   }
+// });
+
+// POST create new product with image 1 server
+// POST create new product (ảnh lưu trên cùng server)
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     let { name, quantity = 10, price = 1000, category } = req.body;
     let slug = slugify(name, { lower: true });
 
-    // Gửi ảnh lên server CDN
-    let imgPath = path.join(imageDir, req.file.filename);
-    let form = new FormData();
-    form.append('image', fs.createReadStream(imgPath));
-    let result = await axios.post(serverCDN, form, { headers: form.getHeaders() });
-    fs.unlinkSync(imgPath); // Xoá ảnh tạm sau khi gửi
+    // Lưu ảnh tại server hiện tại
+    let imgURL = req.file
+      ? `http://localhost:3000/products/images/${req.file.filename}`
+      : "";
 
-    // URL ảnh trên CDN
-    let imgURL = result.data?.data || "";
+    // Tạo sản phẩm mới
+    let newProduct = await productController.CreateAProduct(
+      name, quantity, price, category, slug, imgURL
+    );
 
-    let newProduct = await productController.CreateAProduct(name, quantity, price, category, slug, imgURL);
     CreateSuccessResponse(res, 200, newProduct);
   } catch (error) {
     CreateErrorResponse(res, 500, error.message);
@@ -95,7 +122,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       let imgPath = path.join(imageDir, req.file.filename);
       let form = new FormData();
       form.append('image', fs.createReadStream(imgPath));
-      let result = await axios.post(serverCDN, form, { headers: form.getHeaders() });
+      let result = await axios.post(serverCDN, form, { headers: {'Content-Type': 'multipart/form-data'}});
       fs.unlinkSync(imgPath);
       req.body.imgURL = result.data?.data || "";
     }

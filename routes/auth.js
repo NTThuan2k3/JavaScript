@@ -114,36 +114,36 @@ let upload = multer({
     }
 })
 
-//upload avatar 2 server
-router.post("/change_avatar", check_authentication, upload.single('avatar'), async function (req, res, next) {
-    let imgPath = path.join(avatarDir, req.file.filename);
-    let newform = new FormData();
-    newform.append('avatar', fs.createReadStream(imgPath))
-    let result = await axios.post(serverCDN, newform, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-    fs.unlinkSync(imgPath)
-    // let avatarURL = authURL + req.file.filename;
-    req.user.avatarUrl = result.data.data;
-    await req.user.save()
-    CreateSuccessResponse(res, 200,req.user )
-})
+// //upload avatar 2 server
+// router.post("/change_avatar", check_authentication, upload.single('avatar'), async function (req, res, next) {
+//     let imgPath = path.join(avatarDir, req.file.filename);
+//     let newform = new FormData();
+//     newform.append('avatar', fs.createReadStream(imgPath))
+//     let result = await axios.post(serverCDN, newform, {
+//         headers: {
+//             'Content-Type': 'multipart/form-data'
+//         }
+//     })
+//     fs.unlinkSync(imgPath)
+//     // let avatarURL = authURL + req.file.filename;
+//     req.user.avatarUrl = result.data.data;
+//     await req.user.save()
+//     CreateSuccessResponse(res, 200,req.user )
+// })
 
 router.get("/avatars/:filename", function (req, res, next) {
     let pathAvatar = path.join(avatarDir, req.params.filename)
     res.sendFile(pathAvatar)
 })
 
-// //upload avatar 1 server
-// router.post("/change_avatar", check_authentication, upload.single('avatar'), async function (req, res, next) {
-//     try {
-//         let avatarURL = authURL + req.file.filename;
-//         req.user.avatarUrl = avatarURL;
-//         await req.user.save();
-//         CreateSuccessResponse(res, 200, req.user);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+//upload avatar 1 server
+router.post("/change_avatar", check_authentication, upload.single('avatar'), async function (req, res, next) {
+    try {
+        let avatarURL = authURL + req.file.filename;
+        req.user.avatarUrl = avatarURL;
+        await req.user.save();
+        CreateSuccessResponse(res, 200, req.user);
+    } catch (error) {
+        next(error);
+    }
+});

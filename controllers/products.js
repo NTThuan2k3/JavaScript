@@ -9,7 +9,7 @@ module.exports = {
   GetProductByID: async function (id) {
     return await productSchema.findById(id).populate('category');
   },
-  CreateAProduct: async function (name, quantity, price, categoryInput, slug) {
+  CreateAProduct: async function (name, quantity, price, categoryInput, slug, imageURL) {
     // Tìm theo tên hoặc ID
     let category = mongoose.isValidObjectId(categoryInput)
         ? await categorySchema.findById(categoryInput)
@@ -22,7 +22,8 @@ module.exports = {
       quantity,
       price,
       category: category._id,
-      slug
+      slug,
+      imageURL
     });
     return await newProduct.save();
   },
