@@ -61,7 +61,7 @@ router.post("/images", uploadImage.single('image'), async function (req, res, ne
   CreateSuccessResponse(res, 200, imgURL);
 });
 
-// 📂 Trả file ảnh tĩnh
+// Trả file ảnh tĩnh
 router.get("/avatars/:filename", function (req, res, next) {
   let pathAvatar = path.join(avatarDir, req.params.filename);
   res.sendFile(pathAvatar);
