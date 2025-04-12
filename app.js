@@ -18,7 +18,7 @@ app.use(cors({
   credentials: true
 }));
 
-mongoose.connect("mongodb://0.0.0.0:27017/DoAn");
+mongoose.connect("mongodb://localhost:27017/DoAn");
 mongoose.connection.on('connected',()=>{
   console.log("connected");
 })
