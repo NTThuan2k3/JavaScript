@@ -103,7 +103,10 @@
                 const item = cartData[index]; 
 
                 selectedItems.push({
-                    id: item._id, 
+                    _id: item._id, 
+                    productName: item.product.name,
+                    quantity: item.quantity,
+                    price: item.product.price
                 });
             });
 

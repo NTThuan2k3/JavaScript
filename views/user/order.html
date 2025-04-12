@@ -25,7 +25,7 @@
                 <label for="address" class="form-label">Địa chỉ giao hàng</label>
                 <textarea class="form-control" id="address" rows="3" placeholder="Nhập địa chỉ giao hàng"></textarea>
             </div>
-                <button class="btn btn-primary" onclick="submitOrder()">Xác nhận đơn hàng</button>
+                <a class="btn btn-primary" onclick="submitOrder()">Xác nhận đơn hàng</a>
         </div>
     </div>
 
@@ -70,13 +70,11 @@
         }
 
         const orderPayload = {
-            items: selectedItems.map(item => ({
-                items: item.id,
-            })),
+            items: selectedItems.map(item => item._id),
             phoneNumber: phone,
             shippingAddress: address
         };
-
+        
         try {
             const res = await fetch("http://localhost:3000/load/orders", {
                 method: "POST",
@@ -100,8 +98,8 @@
             console.error("Lỗi gửi đơn hàng:", err);
             alert("Đã xảy ra lỗi khi đặt hàng.");
         }
-        console.log("Dữ liệu:", selectedItems);
-        console.log("Dữ liệu gửi order:", orderPayload);
+        // console.log("Dữ liệu:", selectedItems);
+        // console.log("Dữ liệu gửi order:", orderPayload);
     }
 
     loadSelectedItems();
