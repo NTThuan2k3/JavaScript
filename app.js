@@ -95,6 +95,13 @@ app.get('/orders', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/user/order.html'));
 });
 
+app.get('/orderList', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', '/user/orderList.html'));
+});
+app.get('/orderDetail', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', '/user/orderDetail.html'));
+});
+
 
 app.use(logger('dev'));
 app.use(express.json());

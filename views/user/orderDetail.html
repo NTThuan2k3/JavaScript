@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đơn Hàng | WebBanHang</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .order-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .order-info,
+        .order-items {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .order-items li {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 5px;
+        }
+
+        .order-status {
+            font-weight: bold;
+            color: green;
+        }
+
+        .order-action-buttons {
+            margin-top: 15px;
+        }
+
+        .order-action-buttons button {
+            margin-right: 10px;
+        }
+
+        .order-footer {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">WebBanHang</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="nav-links"></ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="p-5 bg-primary text-white text-center rounded">
+            <h1>Chi Tiết Đơn Hàng</h1>
+            <p>Thông tin chi tiết về đơn hàng của bạn</p>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row" id="order-detail">
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        async function checkLoginStatus() {
+            try {
+                const res = await fetch('http://localhost:3000/auth/me');
+                const data = await res.json();
+                if (data.success) {
+                    renderUserNav(data.user);
+                    console.log('Data user fetched successfully');
+                } else {
+                    renderGuestNav();
+                    console.log('Data fetched successfully');
+                }
+            } catch (err) {
+                console.log('Data fetched failed:', err);
+            }
+        }
+
+        function renderUserNav(user) {
+            document.getElementById('nav-links').innerHTML = `
+                <li class="nav-item">
+                    <a class="btn btn-outline-light me-2" href="/personalinformation">${user.username}</a>
+                </li>
+                ${user.role.name === 'admin' ? `
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning me-2" href="/products">Quản lý sản phẩm</a>
+                    </li>` : '<li class="nav-item"><a class="nav-link" href="/cart">Giỏ hàng</a></li><li class="nav-item"><a class="nav-link" href="/orderList">Đơn mua hàng</a></li>'}
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="logout()">Đăng xuất</a>
+                </li>
+            `;
+        }
+
+        function renderGuestNav() {
+            document.getElementById('nav-links').innerHTML = `
+                <li class="nav-item">
+                    <a class="nav-link" href="login">Đăng nhập</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="signup">Đăng ký</a>
+                </li>
+            `;
+        }
+
+        async function loadOrderDetail() {
+            try {
+                const res = await fetch(`http://localhost:3000/load/orders/${orderId}`);
+                const result = await res.json();
+
+                if (result.success) {
+                    renderOrderDetail(result.data);
+                } else {
+                    alert('Không tìm thấy đơn hàng!');
+                }
+            } catch (error) {
+                console.error('Error loading order detail:', error);
+            }
+        }
+
+        function renderOrderDetail(order) {
+            const orderDetail = document.getElementById('order-detail');
+            orderDetail.innerHTML = `
+                <div class="col-md-12">
+                    <div class="order-card">
+                        <div class="order-header">
+                            Mã đơn hàng: ${order._id}
+                        </div>
+                        <div class="order-info">
+                            <p><strong>SĐT:</strong> ${order.phoneNumber}</p>
+                            <p><strong>Địa chỉ giao hàng:</strong> ${order.shippingAddress}</p>
+                            <p><strong>Phương thức thanh toán:</strong> ${order.method}</p>
+                            <p><strong>Tổng tiền:</strong> ${order.totalAmount.toLocaleString()}₫</p>
+                            <p><strong>Trạng thái:</strong> <span class="order-status">${order.status}</span></p>
+                        </div>
+                        <div class="order-items">
+                            <p><strong>Sản phẩm:</strong></p>
+                            <ul>
+                                ${order.items.map(item => `
+                                    <li>${item.product?.name || 'Không xác định'} - SL: ${item.quantity} - ${item.product?.price.toLocaleString()}₫</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="order-footer">
+                            <p><strong>Ngày tạo: ${new Date(order.createdAt).toLocaleDateString()}</small></p>
+                            <p><strong>Ngày cập nhật: ${new Date(order.updatedAt).toLocaleDateString()}</small></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function logout() {
+            fetch('http://localhost:3000/auth/logout', { credentials: 'include' })
+                .then(() => {
+                    location.reload();
+                });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        console.log('Order ID:', orderId);
+
+        checkLoginStatus();
+        loadOrderDetail(orderId);
+    </script>
+</body>
+
+</html>
