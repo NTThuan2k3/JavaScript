@@ -14,8 +14,9 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 app.use(cors({
-  origin:'*'
-}))
+  origin: 'http://localhost:3000', // ví dụ: 5500
+  credentials: true
+}));
 
 mongoose.connect("mongodb://0.0.0.0:27017/DoAn");
 mongoose.connection.on('connected',()=>{
@@ -90,6 +91,11 @@ app.get('/cart', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/user/shoppingCart.html'));
 });
 
+app.get('/orders', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', '/user/order.html'));
+});
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -105,10 +111,9 @@ app.use('/roles', require('./routes/roles'));
 app.use('/load/products', require('./routes/products'));
 app.use('/load/categories', require('./routes/categories'));
 
-app.use('/orders', require('./routes/orders'));
+app.use('/load/orders', require('./routes/orders'));
 app.use('/load/carts', require('./routes/carts'));
 app.use('/cartItems', require('./routes/cartItems'));
-app.use('/payments', require('./routes/payments'));
 
 
 // catch 404 and forward to error handler

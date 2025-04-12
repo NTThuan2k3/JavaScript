@@ -36,10 +36,11 @@
                 const result = await res.json();
         
                 if (result.data) {
-                cartData = result.data.items;
-                renderCart(cartData);
+                    cartData = result.data.items;
+                    console.log("Dữ liệu giỏ hàng:", cartData);
+                    renderCart(cartData);
                 } else {
-                document.getElementById('cart-items').innerHTML = `<li class="list-group-item">Giỏ hàng trống</li>`;
+                    document.getElementById('cart-items').innerHTML = `<li class="list-group-item">Giỏ hàng trống</li>`;
                 }
             } catch (err) {
                 console.error('Error loading cart:', err);
@@ -86,8 +87,8 @@
         function updateTotal() {
             let total = 0;
             document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
-                const index = cb.getAttribute('data-index');
-                const item = cartData[index];
+                let index = cb.getAttribute('data-index');
+                let item = cartData[index];
                 total += item.quantity * item.product.price;
             });
         
@@ -96,20 +97,71 @@
     
         function handleCheckout() {
             const selectedItems = [];
-        
+
             document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
                 const index = cb.getAttribute('data-index');
-                selectedItems.push(cartData[index]);
+                const item = cartData[index]; 
+
+                selectedItems.push({
+                    id: item._id, 
+                });
             });
-        
+
             if (selectedItems.length === 0) {
                 alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
                 return;
             }
-            // Gửi dữ liệu thanh toán hoặc chuyển trang
-            // console.log("Sản phẩm được chọn để thanh toán:", selectedItems);
-            // alert(`Bạn đã chọn ${selectedItems.length} sản phẩm để thanh toán.`);
-            // Có thể gửi dữ liệu qua fetch tới backend ở đây
+
+            localStorage.setItem("selectedCartItems", JSON.stringify(selectedItems));
+
+            
+            // try {
+            //     const res = await fetch("http://localhost:3000/load/orders", {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //             credentials: "include" 
+            //         },
+            //         body: JSON.stringify({
+            //             items: selectedItems.map(item => ({
+            //                 items: item.id, 
+            //             })),
+            //             phoneNumber: "123",
+            //             shippingAddress: "123"
+            //         })
+            //     });
+
+            //     const result = await res.json();
+
+            //     if (result.success) {
+            //         alert("Đặt hàng thành công!");
+            //         localStorage.removeItem("selectedCartItems");
+            //         window.location.href = "/";
+            //     } else {
+            //         alert("Lỗi khi đặt hàng: " + result.message);
+            //     }
+            // } catch (err) {
+            //     console.error("Lỗi gửi đơn hàng:", err);
+            //     alert("Đã xảy ra lỗi khi đặt hàng.");
+            // }
+            
+
+            window.location.href = "/orders";
+        }
+    
+        async function removeFromCart(itemId) {
+            try {
+                const res = await fetch(`http://localhost:3000/load/carts/${itemId}`, {
+                    method: 'DELETE',
+                });
+                if (res.ok) {
+                    loadCart(); // Tải lại giỏ hàng sau khi xóa
+                } else {
+                    console.error('Error removing item from cart:', res.statusText);
+                }
+            } catch (err) {
+                console.error('Error removing item from cart:', err);
+            }
         }
     
         loadCart();
