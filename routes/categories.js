@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-
-const categoryController = require('../controllers/categories');
-const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
-const slugify = require('slugify');
+var express = require('express');
+var router = express.Router();
+let {check_authentication,check_authorization} = require('../utils/check_auth');
+let constants = require('../utils/constants');
+var categoryController = require('../controllers/categories');
+let { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
+let slugify = require('slugify');
 
 // GET all categories
 router.get('/', async (req, res) => {
@@ -26,7 +27,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create new category
-router.post('/', async (req, res) => {
+router.post('/', check_authentication, check_authorization(constants.ADMIN_PERMISSION), async (req, res) => {
   try {
     let { name, description = '' } = req.body;
     let slug = slugify(name, { lower: true });

@@ -1,14 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const orderController = require('../controllers/orders');
-const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
-const { check_authentication, check_authorization } = require('../utils/check_auth');
-const constants = require('../utils/constants');
+var express = require('express');
+var router = express.Router();
+var orderController = require('../controllers/orders');
+let { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
+let { check_authentication, check_authorization } = require('../utils/check_auth');
+let constants = require('../utils/constants');
 
 // Tạo đơn hàng mới (user tạo)
-router.post('/', check_authentication, async function (req, res, next) {
+router.post('/', check_authentication, check_authorization(constants.USER_PERMISSION), async function (req, res, next) {
   try {
-    const { phoneNumber, shippingAddress, items, method } = req.body;
+    let { phoneNumber, shippingAddress, items, method } = req.body;
 
     let newOrder = await orderController.CreateAnOrder(
       req.user._id,
@@ -35,9 +35,9 @@ router.put('/:id', check_authentication, check_authorization(constants.MOD_PERMI
 });
 
 // Hủy đơn hàng
-router.delete('/:id', check_authentication, async (req, res) => {
+router.delete('/:id', check_authentication, check_authorization(constants.USER_PERMISSION), async (req, res) => {
   try {
-    const deletedOrder = await orderController.DeleteOrder(req.params.id);
+    let deletedOrder = await orderController.DeleteOrder(req.params.id);
     CreateSuccessResponse(res, 200, deletedOrder);
   } catch (error) {
     CreateErrorResponse(res, 400, error.message);
@@ -45,9 +45,9 @@ router.delete('/:id', check_authentication, async (req, res) => {
 });
 
 // Lấy tất cả đơn hàng của user
-router.get('/', check_authentication, async (req, res) => {
+router.get('/', check_authentication, check_authorization(constants.USER_PERMISSION), async (req, res) => {
   try {
-    const orders = await orderController.GetAllOrders();
+    let orders = await orderController.GetAllOrders();
     CreateSuccessResponse(res, 200, orders);
   } catch (error) {
     CreateErrorResponse(res, 400, error.message);
@@ -55,9 +55,9 @@ router.get('/', check_authentication, async (req, res) => {
 });
 
 // Lấy đơn hàng theo ID
-router.get('/:id', check_authentication, async (req, res) => {
+router.get('/:id', check_authentication, check_authorization(constants.USER_PERMISSION), async (req, res) => {
   try {
-    const order = await orderController.GetOrderById(req.params.id);
+    let order = await orderController.GetOrderById(req.params.id);
     CreateSuccessResponse(res, 200, order);
   } catch (error) {
     CreateErrorResponse(res, 404, error.message);

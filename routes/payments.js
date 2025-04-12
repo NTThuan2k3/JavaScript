@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const paymentController = require('../controllers/payments');
-const { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
-const { check_authentication } = require('../utils/check_auth');
+var express = require('express');
+var router = express.Router();
+let paymentController = require('../controllers/payments');
+let { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseHandler');
+let { check_authentication } = require('../utils/check_auth');
+let constants = require('../utils/constants');
 
 // Tạo thanh toán cho đơn hàng
 router.post('/', check_authentication, async (req, res) => {

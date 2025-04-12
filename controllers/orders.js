@@ -1,6 +1,6 @@
-const cartItemSchema = require('../schemas/cartItem');
-const productSchema = require('../schemas/product');
-const orderSchema = require('../schemas/order');
+let cartItemSchema = require('../schemas/cartItem');
+let productSchema = require('../schemas/product');
+let orderSchema = require('../schemas/order');
 
 module.exports = {
   CreateAnOrder: async function (userId, phoneNumber, shippingAddress, cartItemIds, method) {
@@ -9,17 +9,17 @@ module.exports = {
     }
 
     // Lấy danh sách cartItems từ database
-    const cartItems = await cartItemSchema.find({ _id: { $in: cartItemIds } }).populate('product');
+    let cartItems = await cartItemSchema.find({ _id: { $in: cartItemIds } }).populate('product');
 
     if (!cartItems || cartItems.length === 0) {
       throw new Error("Không tìm thấy cartItem nào hợp lệ");
     }
 
-    const orderItems = [];
+    let orderItems = [];
     let totalAmount = 0;
 
-    for (const item of cartItems) {
-      const product = item.product;
+    for (let item of cartItems) {
+      let product = item.product;
 
       if (!product) continue;
 
@@ -41,9 +41,9 @@ module.exports = {
       totalAmount += product.price * item.quantity;
     }
 
-    const finalMethod = method || "cash";
+    let finalMethod = method || "cash";
 
-    const newOrder = new orderSchema({
+    let newOrder = new orderSchema({
       user: userId,
       phoneNumber,
       shippingAddress,
@@ -52,11 +52,11 @@ module.exports = {
       method: finalMethod
     });
 
-    const savedOrder = await newOrder.save();
+    let savedOrder = await newOrder.save();
     return await savedOrder.populate('items.product');
   },
   DeleteOrder: async function (orderId) {
-    const order = await orderSchema.findById(orderId).populate('items.product');
+    let order = await orderSchema.findById(orderId).populate('items.product');
   
     if (!order) {
       throw new Error("Không tìm thấy đơn hàng");
@@ -67,8 +67,8 @@ module.exports = {
     }
   
     // Trả lại số lượng hàng cho từng sản phẩm
-    for (const item of order.items) {
-      const product = item.product;
+    for (let item of order.items) {
+      let product = item.product;
   
       if (product) {
         product.quantity += item.quantity;
@@ -85,7 +85,7 @@ module.exports = {
       .populate('items.product');         // lấy thông tin sản phẩm
   },
   GetOrderById: async function (orderId) {
-    const order = await orderSchema
+    let order = await orderSchema
       .findById(orderId).populate('items.product');
   
     if (!order || order.isDeleted) {

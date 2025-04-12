@@ -1,5 +1,5 @@
-const categorySchema = require('../schemas/category');
-const slugify = require('slugify');
+let categorySchema = require('../schemas/category');
+let slugify = require('slugify');
 
 module.exports = {
   GetAllCategories: async function () {
