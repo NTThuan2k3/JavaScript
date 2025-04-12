@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Categories</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 bg-dark text-white vh-100 p-3">
+            <h4 class="text-center mb-4">Admin</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/products">Quản lý Sản phẩm</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/categories">Quản lý Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/users">Quản lý Users</a>
+                </li>
+            </ul>
+            <hr>
+            <a href="/" class="btn btn-secondary w-100">Quay lại trang chủ</a>
+        </div>
+        <div class="col-md-10 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Danh sách Categories</h2>
+                <a href="/categories/add" class="btn btn-success">+ Thêm Category</a>
+            </div>
+
+            <div id="alertMessage" class="alert d-none"></div>
+
+            <table class="table table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tên category</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="categoryTable">
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+async function loadCategories() {
+    const alertDiv = document.getElementById('alertMessage');
+    const table = document.getElementById('categoryTable');
+
+    try {
+        const res = await fetch('http://localhost:3000/load/categories');
+        const data = await res.json();
+
+        table.innerHTML = '';
+        data.data.forEach(category => {
+            if (!category || category.isDeleted) return;
+            table.innerHTML += `
+                <tr>
+                    <td>${category.name}</td>
+                    <td>
+                        <a href="/categories/edit?id=${category._id}" class="btn btn-sm btn-info">Sửa</a>
+                        <button onclick="deleteCategory('${category._id}')" class="btn btn-sm btn-danger">Xóa</button>
+                    </td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        alertDiv.classList.remove('d-none');
+        alertDiv.classList.add('alert-danger');
+        alertDiv.textContent = 'Có lỗi xảy ra khi tải dữ liệu: ' + error.message;
+    }
+}
+
+async function deleteCategory(id) {
+    if (confirm('Bạn có chắc chắn muốn xóa?')) {
+        const res = await fetch(`http://localhost:3000/load/categories/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            alert('Xóa thành công!');
+            loadCategories();
+        } else {
+            alert(data.message || 'Xóa thất bại!');
+        }
+    }
+}
+
+loadCategories();
+</script>
+
+</body>
+
+</html>

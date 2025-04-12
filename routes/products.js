@@ -14,7 +14,7 @@ let { CreateSuccessResponse, CreateErrorResponse } = require('../utils/responseH
 // Cấu hình upload ảnh (sẽ upload lên thư mục tạm trước khi gửi đến server CDN)
 let imageDir = path.join(__dirname, "../images");
 let serverCDN = 'http://localhost:4000/images';
-let productImgURL = "http://localhost:3000/products/images/";
+let productImgURL = "http://localhost:3000/load/products/images/";
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, imageDir),
@@ -96,7 +96,7 @@ router.post('/', upload.single('image'), check_authentication, check_authorizati
 
     // Lưu ảnh tại server hiện tại
     let imgURL = req.file
-      ? `http://localhost:3000/products/images/${req.file.filename}`
+      ? `http://localhost:3000/load/products/images/${req.file.filename}`
       : "";
 
     // Tạo sản phẩm mới
@@ -120,7 +120,7 @@ router.put('/:id', upload.single('image'), check_authentication, check_authoriza
 
     // Nếu có file ảnh → tạo đường dẫn ảnh nội bộ
     if (req.file) {
-      req.body.imageURL = `http://localhost:3000/products/images/${req.file.filename}`;
+      req.body.imageURL = `http://localhost:3000/load/products/images/${req.file.filename}`;
     }
 
     // Cập nhật sản phẩm
@@ -173,3 +173,4 @@ router.get("/images/:filename", function (req, res, next) {
 });
 
 module.exports = router;
+

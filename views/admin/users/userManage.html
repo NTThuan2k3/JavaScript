@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Người dùng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 bg-dark text-white vh-100 p-3">
+                <h4 class="text-center mb-4">Admin</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-white" href="/products">Quản lý Sản phẩm</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-white" href="/categories">Quản lý Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/users">Quản lý Users</a>
+                    </li>
+                </ul>
+                <hr>
+                <a href="/" class="btn btn-secondary w-100">Quay lại trang chủ</a>
+            </div>
+
+            <div class="col-md-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">Danh sách Người dùng</h2>
+                    <a href="/users/add" class="btn btn-success">+ Thêm Người dùng</a>
+                </div>
+                <div id="alertMessage" class="alert d-none"></div>
+                <table class="table table-bordered table-hover text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Tên người dùng</th>
+                            <th>Email</th>
+                            <th>Họ tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai trò</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            const table = document.getElementById('userTable');
+    
+            try {
+                const res = await fetch('http://localhost:3000/load/users');
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+    
+                table.innerHTML = '';
+                data.data.forEach(user => {
+                    if (user.isDeleted) return;
+                    table.innerHTML += `
+                        <tr>
+                            <td>${user.username || 'N/A'}</td>
+                            <td>${user.email || 'N/A'}</td>
+                            <td>${user.fullname || 'N/a'}</td>
+                            <td>${user.phone || 'N/a'}</td>
+                            <td>${user.role.name || 'User'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser('${user._id}')">Xóa</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+    
+            } catch (error) {
+                console.error('Lỗi:', error.message);
+            }
+        }
+    
+        async function deleteUser(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
+                const res = await fetch(`http://localhost:3000/load/users/${id}`, {
+                    method: 'DELETE',
+                });
+    
+                const data = await res.json();
+    
+                if (data.success) {
+                    alert('Xóa người dùng thành công!');
+                    loadUsers();
+                } else {
+                    alert(data.message || 'Xóa người dùng thất bại!');
+                }
+            }
+        }
+    
+        loadUsers();
+    </script>
+</body>
+</html>

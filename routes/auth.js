@@ -42,8 +42,10 @@ router.post('/login', LoginValidator, validate, async function (req, res, next) 
 });
 router.get('/logout', function (req, res, next) {
     CreateCookieResponse(res, 'token', "", Date.now());
+    CreateSuccessResponse(res, 200, "Logged out successfully");
 })
 router.get('/me', check_authentication, function (req, res, next) {
+    res.json({ success: true, user: req.user });
     CreateSuccessResponse(res, 200, req.user)
 })
 router.post('/change_password', check_authentication,
@@ -72,6 +74,12 @@ router.post('/forgotpassword', async function (req, res, next) {
         next(error)
     }
 })
+// reset password html view (GET)
+router.get('/resetpassword/:token', function(req, res, next) {
+    let token = req.params.token;
+    res.redirect(`/resetpassword?token=${token}`);
+});
+// reset password (POST)
 router.post('/resetpassword/:token', async function (req, res, next) {
     try {
         let token = req.params.token;

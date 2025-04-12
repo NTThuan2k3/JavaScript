@@ -8,13 +8,12 @@ let constants = require('../utils/constants');
 
 /* GET users listing. */
 
-router.get('/',check_authentication,check_authorization(constants.ADMIN_PERMISSION), async function (req, res, next) {
+router.get('/',check_authentication,check_authorization(constants.MOD_PERMISSION), async function (req, res, next) {
   console.log(req.headers.authorization);
   let users = await userController.GetAllUser();
   CreateSuccessResponse(res, 200, users)
 });
-
-router.post('/',check_authorization(constants.ADMIN_PERMISSION), check_authentication, async function (req, res, next) {
+router.post('/', check_authentication,check_authorization(constants.ADMIN_PERMISSION), async function (req, res, next) {
   try {
     let body = req.body;
     let newUser = await userController.CreateAnUser(body.username, body.password, body.email, body.role);
@@ -23,7 +22,7 @@ router.post('/',check_authorization(constants.ADMIN_PERMISSION), check_authentic
     CreateErrorResponse(res, 404, error.message)
   }
 });
-router.put('/:id', check_authentication, async function (req, res, next) {
+router.put('/:id',check_authentication, async function (req, res, next) {
   try {
     let body = req.body;
     let updatedResult = await userController.UpdateAnUser(req.params.id, body);
@@ -32,14 +31,5 @@ router.put('/:id', check_authentication, async function (req, res, next) {
     next(error)
   }
 });
-router.delete('/:id', check_authentication, check_authorization(constants.ADMIN_PERMISSION), async function (req, res, next) {
-  try {
-    let deletedUser = await userController.DeleteAnUser(req.params.id);
-    CreateSuccessResponse(res, 200, deletedUser);
-  } catch (error) {
-    CreateErrorResponse(res, 500, error.message);
-  }
-});
-
 
 module.exports = router;

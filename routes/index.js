@@ -7,6 +7,7 @@ let productSchema = require('../schemas/product')
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
+
 router.get('/api/:category', async function (req, res, next) {
   let categorySlug = req.params.category;
   let category = await categorySchema.findOne({

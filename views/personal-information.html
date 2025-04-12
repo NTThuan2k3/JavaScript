@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4 text-center" style="width: 100%; max-width: 400px;">
+            <h3 class="mb-4">Thông tin cá nhân</h3>
+
+            <img id="avatar" src="" class="rounded-circle mb-3 mx-auto d-block" width="150" height="150" alt="Avatar">
+
+            <h5 id="username"></h5>
+            <p id="fullname" class="text-muted"></p>
+
+            <!-- Thêm nút cập nhật ảnh đại diện -->
+            <input type="file" id="avatarInput" class="form-control mb-3" accept="image/*">
+            <button id="uploadAvatarBtn" class="btn btn-primary w-100">Cập nhật ảnh đại diện</button>
+
+            <a href="/changepassword" class="btn btn-warning w-100 mt-2">Đổi mật khẩu</a>
+
+            <a href="/" class="btn btn-secondary w-100 mt-2">Quay lại trang chủ</a>
+        </div>
+    </div>
+
+    <script>
+        async function loadUserInfo() {
+            try {
+                const res = await fetch('http://localhost:3000/auth/me', {
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('username').innerText = data.user.username;
+                    document.getElementById('fullname').innerText = data.user.fullname || 'Chưa cập nhật';
+                    document.getElementById('avatar').src = data.user.avatarUrl || 'https://via.placeholder.com/150';
+                } else {
+                    alert('Bạn chưa đăng nhập!');
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                alert('Lỗi hệ thống!');
+                window.location.href = '/login';
+            }
+        }
+
+        async function updateAvatar(event) {
+            const fileInput = document.getElementById('avatarInput');
+            const formData = new FormData();
+            formData.append('avatar', fileInput.files[0]);
+            const res = await fetch('http://localhost:3000/auth/change_avatar', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('avatar').src = data.user.avatarUrl;
+                    alert('Cập nhật ảnh đại diện thành công!');
+                } else {
+                    console.log(data.message);
+                    alert('Lỗi cập nhật ảnh đại diện!');
+                }
+        }
+
+        document.getElementById('uploadAvatarBtn').addEventListener('click', updateAvatar);
+
+        loadUserInfo();
+    </script>
+</body>
+
+</html>

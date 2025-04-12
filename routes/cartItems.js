@@ -19,6 +19,7 @@ router.post('/', check_authentication, check_authorization(constants.USER_PERMIS
     let item = await cartItemController.AddCartItem(req.user._id, req.body.product, req.body.quantity);
     CreateSuccessResponse(res, 200, item);
   } catch (error) {
+    // console.error("Lỗi add to cart:", error);
     CreateErrorResponse(res, 500, error.message);
   }
 });
