@@ -144,5 +144,11 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Trả file ảnh tĩnh
+router.get("/images/:filename", function (req, res, next) {
+  let pathImage = path.join(imageDir, req.params.filename);
+  res.sendFile(pathImage);
+});
+
 module.exports = router;
 
