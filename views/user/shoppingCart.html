@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng | WebBanHang</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container my-5">
+        <h2 class="mb-4 text-center">Giỏ hàng của bạn</h2>
+      
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="select-all">
+            <label class="form-check-label" for="select-all">Chọn tất cả</label>
+        </div>
+      
+        <ul id="cart-items" class="list-group mb-4"></ul>
+      
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="/" class="btn btn-secondary">Về trang chủ</a>
+            <div>
+                <h4 id="total-price" class="mb-2">Tổng tiền: 0 VNĐ</h4>
+                <button class="btn btn-success" onclick="handleCheckout()">Thanh Toán</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cartData = [];
+    
+        async function loadCart() {
+            try {
+                const res = await fetch('http://localhost:3000/load/carts');
+                const result = await res.json();
+        
+                if (result.data) {
+                cartData = result.data.items;
+                renderCart(cartData);
+                } else {
+                document.getElementById('cart-items').innerHTML = `<li class="list-group-item">Giỏ hàng trống</li>`;
+                }
+            } catch (err) {
+                console.error('Error loading cart:', err);
+                document.getElementById('cart-items').innerHTML = `<li class="list-group-item text-danger">Không thể load giỏ hàng!</li>`;
+            }
+        }
+    
+        function renderCart(items) {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+        
+            items.forEach((item, index) => {
+                cartItems.innerHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                        <input class="form-check-input item-checkbox" type="checkbox" data-index="${index}">
+                        <label class="form-check-label">
+                            <strong>${item.product.name}</strong> <br>
+                            Số lượng: ${item.quantity} <br>
+                            Đơn giá: ${item.product.price.toLocaleString()} VNĐ
+                        </label>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">
+                            ${(item.quantity * item.product.price).toLocaleString()} VNĐ
+                        </span>
+                    </li>
+                `;
+            });
+        
+            // Sự kiện khi chọn sản phẩm
+            document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateTotal);
+            });
+        
+            document.getElementById('select-all').addEventListener('change', function () {
+                const isChecked = this.checked;
+                document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = isChecked);
+                updateTotal();
+            });
+        
+            updateTotal();
+        }
+    
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                const index = cb.getAttribute('data-index');
+                const item = cartData[index];
+                total += item.quantity * item.product.price;
+            });
+        
+            document.getElementById('total-price').innerText = `Tổng tiền: ${total.toLocaleString()} VNĐ`;
+        }
+    
+        function handleCheckout() {
+            const selectedItems = [];
+        
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                const index = cb.getAttribute('data-index');
+                selectedItems.push(cartData[index]);
+            });
+        
+            if (selectedItems.length === 0) {
+                alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+                return;
+            }
+            // Gửi dữ liệu thanh toán hoặc chuyển trang
+            // console.log("Sản phẩm được chọn để thanh toán:", selectedItems);
+            // alert(`Bạn đã chọn ${selectedItems.length} sản phẩm để thanh toán.`);
+            // Có thể gửi dữ liệu qua fetch tới backend ở đây
+        }
+    
+        loadCart();
+    </script>
+
+</body>
+</html>

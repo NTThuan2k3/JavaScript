@@ -15,9 +15,11 @@ router.get('/', check_authentication, async (req, res) => {
 
 router.post('/', check_authentication, async (req, res) => {
   try {
+    // console.log("Body gửi lên:", req.body);
     const item = await cartItemController.AddCartItem(req.user._id, req.body.product, req.body.quantity);
     CreateSuccessResponse(res, 200, item);
   } catch (error) {
+    // console.error("Lỗi add to cart:", error);
     CreateErrorResponse(res, 500, error.message);
   }
 });

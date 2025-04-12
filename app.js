@@ -58,6 +58,10 @@ app.get('/products', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/admin/products/productsManage.html'));
 });
 
+app.get('/product-details', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', '/user/productDetails.html'));
+});
+
 app.get('/products/add', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/admin/products/addProduct.html'));
 });
@@ -83,7 +87,7 @@ app.get('/users', (req, res) => {
 });
 
 app.get('/cart', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', '/user/cart.html'));
+  res.sendFile(path.join(__dirname, 'views', '/user/shoppingCart.html'));
 });
 
 app.use(logger('dev'));
