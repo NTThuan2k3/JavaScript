@@ -52,7 +52,8 @@ module.exports = {
       method: finalMethod
     });
 
-    return await newOrder.save();
+    const savedOrder = await newOrder.save();
+    return await savedOrder.populate('items.product');
   },
   DeleteOrder: async function (orderId) {
     const order = await orderSchema.findById(orderId).populate('items.product');
