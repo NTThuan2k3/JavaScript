@@ -87,11 +87,10 @@ module.exports = {
   GetOrderById: async function (id) {
     return await orderModel.findById({ _id: id, isDeleted: false });
   },
-  GetOrdersByUserId: async function (userId) {
+  GetOrdersByUserId: async function (User) {
     try {
-       let User = await userModel.findById(userId);
        if (User) {
-          return await orderModel.find({ user: User, isDeleted: false });
+          return await orderSchema.find({ user: User, isDeleted: false });
        } else {
           throw new Error("Khong tim thay user");
        }
@@ -108,5 +107,23 @@ module.exports = {
     }
   
     return order;
-  }  
+  },
+  UpdateOrderStatus: async function (orderId, updateData) {
+    if (!updateData.status) {
+      throw new Error("Vui lòng cung cấp trạng thái mới cho đơn hàng");
+    }
+  
+    // Kiểm tra đơn hàng có tồn tại và chưa bị xoá
+    let order = await orderSchema.findById(orderId);
+    if (!order || order.isDeleted) {
+      throw new Error("Đơn hàng không tồn tại hoặc đã bị hủy");
+    }
+  
+    // Cập nhật trường status
+    order.status = updateData.status;
+    await order.save();
+  
+    // Trả về bản ghi sau cập nhật, kèm populate nếu cần
+    return await order.populate('items.product');
+  }
 };
