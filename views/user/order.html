@@ -18,15 +18,23 @@
         <div class="card p-4">
             <h5 class="mb-3">Thông tin giao hàng</h5>
             <div class="mb-3">
+                <label for="method" class="form-label">Phương thức thanh toán:</label>
+                <select class="form-select" id="method">
+                    <option value="">-- Chọn phương thức --</option>
+                    <option value="cash">Tiền mặt</option>
+                    <option value="visa">Visa</option>
+                    <option value="momo">Momo</option>
+                    <option value="banking">Chuyển khoản</option>
+                </select>
+            </div>
                 <label for="phone" class="form-label">Số điện thoại</label>
                 <input type="text" class="form-control" id="phone" placeholder="Nhập số điện thoại">
-            </div>
                 <div class="mb-3">
-                <label for="address" class="form-label">Địa chỉ giao hàng</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Nhập địa chỉ giao hàng"></textarea>
-            </div>
-                <a class="btn btn-primary" onclick="submitOrder()">Xác nhận đơn hàng</a>
+                    <label for="address" class="form-label">Địa chỉ giao hàng</label>
+                    <textarea class="form-control" id="address" rows="3" placeholder="Nhập địa chỉ giao hàng"></textarea>
+                </div>
         </div>
+                <a class="btn btn-primary" onclick="submitOrder()">Xác nhận đơn hàng</a>
     </div>
 
     <script>
@@ -63,6 +71,7 @@
     async function submitOrder() {
         const phone = document.getElementById("phone").value.trim();
         const address = document.getElementById("address").value.trim();
+        const method = document.getElementById("method").value;
 
         if (!phone || !address) {
             alert("Vui lòng nhập đầy đủ số điện thoại và địa chỉ giao hàng.");
@@ -72,7 +81,8 @@
         const orderPayload = {
             items: selectedItems.map(item => item._id),
             phoneNumber: phone,
-            shippingAddress: address
+            shippingAddress: address,
+            paymentMethod: method,
         };
         
         try {

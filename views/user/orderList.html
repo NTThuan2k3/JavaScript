@@ -82,7 +82,7 @@
 
     <div class="container mt-5">
         <div class="row" id="order-list">
-            <!-- Danh sách đơn hàng sẽ được hiển thị ở đây -->
+
         </div>
     </div>
 
@@ -140,7 +140,7 @@
 
                 allOrders = result.data.filter(order => !order.isDeleted);
 
-                renderOrders(); // Hiển thị tất cả đơn hàng
+                renderOrders();
 
             } catch (error) {
                 console.error('Error loading orders', error);
@@ -198,7 +198,7 @@
                 
         async function cancelOrder(orderId) {
             try {
-                const response = await fetch(`http://localhost:3000/orders/${orderId}`, {
+                const response = await fetch(`http://localhost:3000/load/orders/${orderId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -209,7 +209,7 @@
                 const data = await response.json();
                 if (data.success) {
                     alert('Đơn hàng đã được hủy!');
-                    loadOrders();  // Tải lại danh sách đơn hàng
+                    loadOrders();  
                 } else {
                     alert('Hủy đơn hàng thất bại!');
                 }

@@ -182,7 +182,6 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('orderId');
-        console.log('Order ID:', orderId);
 
         checkLoginStatus();
         loadOrderDetail(orderId);
