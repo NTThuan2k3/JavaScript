@@ -1,6 +1,7 @@
 let cartItemSchema = require('../schemas/cartItem');
 let productSchema = require('../schemas/product');
 let orderSchema = require('../schemas/order');
+let userSchema = require('../schemas/user');
 
 module.exports = {
   CreateAnOrder: async function (userId, phoneNumber, shippingAddress, cartItemIds, method) {
@@ -85,13 +86,13 @@ module.exports = {
       .populate('items.product');         // lấy thông tin sản phẩm
   },
   GetOrderById: async function (id) {
-    return await orderModel.findById({ _id: id, isDeleted: false });
+    return await orderSchema.findById({ _id: id, isDeleted: false });
   },
   GetOrdersByUserId: async function (userId) {
     try {
-       let User = await userModel.findById(userId);
+       let User = await userSchema.findById(userId);
        if (User) {
-          return await orderModel.find({ user: User, isDeleted: false });
+          return await orderSchema.find({ user: User, isDeleted: false }).populate('items.product');
        } else {
           throw new Error("Khong tim thay user");
        }

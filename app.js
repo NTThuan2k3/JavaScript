@@ -101,6 +101,10 @@ app.get('/orderList', (req, res) => {
 app.get('/orderDetail', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', '/user/orderDetail.html'));
 });
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'chat.html'));
+});
+
 
 
 app.use(logger('dev'));
