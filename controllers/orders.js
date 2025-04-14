@@ -90,7 +90,7 @@ module.exports = {
   GetOrdersByUserId: async function (User) {
     try {
        if (User) {
-          return await orderSchema.find({ user: User, isDeleted: false });
+          return await orderSchema.find({ user: User, isDeleted: false }).populate('items.product');
        } else {
           throw new Error("Khong tim thay user");
        }
