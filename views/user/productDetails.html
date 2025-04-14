@@ -122,7 +122,7 @@
             document.getElementById('product-image').src = product.imageURL || 'https://via.placeholder.com/400x300?text=No+Image';
             document.getElementById('add-to-cart-btn').addEventListener('click', () => {
                 const quantity = parseInt(document.getElementById('quantity').value) || 1;
-                addToCart(product._id, quantity); // truyền quantity vào đây OK rồi
+                addToCart(product._id, quantity);
             });
         })
         .catch(err => {
